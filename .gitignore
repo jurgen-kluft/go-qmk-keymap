@@ -1,0 +1,28 @@
+#ignore all files
+*
+#do scan all folders in go-home
+!*/
+
+tags
+*.exe
+*.exe~
+
+.git/
+.vscode/
+.build/
+
+#except the following files
+!*.cpp
+!*.hpp
+!*.c
+!*.h
+!*.inl
+
+!*.go
+!*.json
+!*.md
+
+!*.ino
+
+!*.code-workspace
+!*.iotworkbenchproject
