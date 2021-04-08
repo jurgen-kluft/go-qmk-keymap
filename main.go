@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+	"strings"
 )
 
 // TODO:
@@ -16,8 +17,20 @@ type keymap_t struct {
 }
 
 type keyboard_t struct {
-	name string
-	rows [][]int
+	name    string
+	numkeys int
+	rows    [][]int
+}
+
+const (
+	STATE_HEAD int = iota
+	STATE_KEYMAPS
+	STATE_KEYMAP
+	STATE_TAIL
+)
+
+func print_formatted(k *keyboard_t, keymap []string) {
+
 }
 
 func main() {
@@ -30,9 +43,53 @@ func main() {
 	// ____, ____, ____, e041, e042, e043, e044, e045, ____, ____, e046, e047, e048, e049, e050, ____, ____, ____
 	//
 
+	keyboard := &keyboard_t{name: "Kyria", rows: nil}
+
+	keymaps_begin := "keymaps[]"
+	keymaps_end := "};"
+	keymap_begin := "LAYOUT("
+	keymap_end := ")"
+
 	scanner := bufio.NewScanner(os.Stdin)
+	state := STATE_HEAD
+	keymap := make([]string, 80)
 	for scanner.Scan() {
-		fmt.Println(scanner.Text())
+		line := scanner.Text()
+		if state == STATE_HEAD {
+			if strings.Contains(line, keymaps_begin) {
+				state = STATE_KEYMAPS
+				fmt.Println(line)
+			} else if strings.Compare(line, keymaps_end) == 0 {
+				state = STATE_TAIL
+				fmt.Println(line)
+			} else {
+				fmt.Println(line)
+			}
+		} else if state == STATE_KEYMAPS {
+			if strings.Contains(line, keymap_begin) {
+				state = STATE_KEYMAP
+				keymap = keymap[:0] // set the array to a length of 0
+				fmt.Println(line)
+			} else if strings.Compare(line, keymap_end) == 0 {
+				// do we have a parsed keymap, if so write it out here in a formatted form
+				if len(keymap) == keyboard.numkeys {
+					print_formatted(keyboard, keymap)
+				}
+				state = STATE_KEYMAPS
+				fmt.Println(line)
+			} else {
+				fmt.Println(line)
+			}
+		} else if state == STATE_KEYMAP {
+			// collect the elements from these lines
+			keystrs := strings.Split(line, ",")
+			for _, key := range keystrs {
+				key = strings.Trim(key, " \t")
+				keymap = append(keymap, key)
+			}
+		} else if state == STATE_TAIL {
+			fmt.Println(line)
+		}
 	}
 
 	// HEAD
