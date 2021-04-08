@@ -44,7 +44,7 @@ func print_formatted(k *config.Keyboard, spacing []int, keymap []string) []strin
 		key_formats[i] = fmt.Sprintf("%s%d%s", "%-", w, "s")
 	}
 
-	for _, row := range k.Rows {
+	for ri, row := range k.Rows {
 		separator := ""
 		line := "    "
 		for i, ki := range row {
@@ -57,7 +57,12 @@ func print_formatted(k *config.Keyboard, spacing []int, keymap []string) []strin
 				separator = ", "
 			}
 		}
-		line = line + ","
+
+		// the last row does not need a comma at the end
+		if ri < (len(k.Rows) - 1) {
+			line = line + ","
+		}
+
 		output = append(output, line)
 	}
 	return output
