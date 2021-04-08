@@ -32,7 +32,9 @@ func (r *Config) Marshal() ([]byte, error) {
 }
 
 type Config struct {
-	Keyboards []Keyboard `json:"keyboards"`
+	Keyviz    map[string]string `json:"keyviz"`
+	Spacing   []int             `json:"spacing"`
+	Keyboards []Keyboard        `json:"keyboards"`
 }
 
 func (cfg *Config) FindKeyboard(kb_name string) (kb *Keyboard) {
@@ -45,8 +47,11 @@ func (cfg *Config) FindKeyboard(kb_name string) (kb *Keyboard) {
 }
 
 type Keyboard struct {
-	Name    string    `json:"name"`
-	Numkeys int64     `json:"numkeys"`
-	Rows    [][]int64 `json:"rows"`
-	Viz     []string  `json:"viz"`
+	Name    string   `json:"name"`
+	Numkeys int      `json:"numkeys"`
+	Rows    [][]int  `json:"rows"`
+	Viz     []string `json:"viz"`
 }
+
+// key symbols
+// http://xahlee.info/comp/unicode_computing_symbols.html

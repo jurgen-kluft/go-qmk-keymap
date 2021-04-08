@@ -16,8 +16,8 @@ const (
 	STATE_TAIL
 )
 
-func print_formatted(k *config.Keyboard, keymap []string) []string {
-	output := make([]string, 0, 5)
+func print_formatted(k *config.Keyboard, spacing []int, keymap []string) []string {
+	output := make([]string, 0, 8)
 	width := make([]int, len(k.Rows[0]))
 	for i := 0; i < len(width); i++ {
 		width[i] = 3
@@ -28,6 +28,13 @@ func print_formatted(k *config.Keyboard, keymap []string) []string {
 				key := keymap[ki]
 				if len(key) > width[i] {
 					width[i] = len(key)
+				}
+			} else {
+				ki = -ki
+				if ki >= 0 && ki < len(spacing) {
+					if spacing[ki] > width[i] {
+						width[i] = spacing[ki]
+					}
 				}
 			}
 		}
@@ -41,7 +48,7 @@ func print_formatted(k *config.Keyboard, keymap []string) []string {
 		separator := ""
 		line := "    "
 		for i, ki := range row {
-			if ki == -1 {
+			if ki < 0 {
 				line = line + fmt.Sprintf(key_formats[i], " ")
 				line = line + "  "
 			} else {
@@ -53,6 +60,12 @@ func print_formatted(k *config.Keyboard, keymap []string) []string {
 		line = line + ","
 		output = append(output, line)
 	}
+	return output
+}
+
+func print_viz(k *config.Keyboard, keymap []string) []string {
+	output := make([]string, 0, 5)
+
 	return output
 }
 
@@ -102,7 +115,7 @@ func mainReturnWithCode() int {
 			if strings.TrimSpace(line) == keymap_end1 || strings.TrimSpace(line) == keymap_end2 {
 				// do we have a parsed keymap, if so write it out here in a formatted form
 				//if len(keymap) == keyboard.numkeys {
-				formatted := print_formatted(keyboard, keymap)
+				formatted := print_formatted(keyboard, kbconfig.Spacing, keymap)
 				for _, l := range formatted {
 					output = append(output, l)
 				}
