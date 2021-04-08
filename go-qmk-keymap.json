@@ -64,8 +64,8 @@
         "KC_RGUI": "⌘"
     },
     "spacing": [
-        4,
-        4,
+        10,
+        10,
         8
     ],
     "keyboards": [
