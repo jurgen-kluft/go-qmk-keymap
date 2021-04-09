@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"strings"
+	"unicode"
 
 	"github.com/jurgen-kluft/go-qmk-keymap/config"
 )
@@ -48,7 +49,7 @@ func print_formatted(k *config.Keyboard, spacing []int, keymap []string) []strin
 		key_formats[i] = fmt.Sprintf("%s%d%s", "%-", w, "s")
 	}
 
-	for _, row := range k.Rows {
+	for ri, row := range k.Rows {
 		separator := ""
 		line := "    "
 		for i, ki := range row {
@@ -61,10 +62,63 @@ func print_formatted(k *config.Keyboard, spacing []int, keymap []string) []strin
 				separator = ", "
 			}
 		}
-		line = line + ","
+
+		// the last row does not need a comma at the end
+		if ri < (len(k.Rows) - 1) {
+			line = line + ","
+		}
+
 		output = append(output, line)
 	}
 	return output
+}
+
+const (
+	SKIP_WHITESPACE int = iota
+	PARSE_ELEMENT
+)
+
+func parse_elements(line string) []string {
+	keymap := make([]string, 0, 80)
+
+	state := SKIP_WHITESPACE
+	open := 0
+	elem := make([]rune, 0, 60)
+	for _, r := range line {
+		if state == SKIP_WHITESPACE {
+			if unicode.IsSpace(r) == false {
+				state = PARSE_ELEMENT
+				elem = elem[:0]
+				elem = append(elem, r)
+			}
+		} else if state == PARSE_ELEMENT {
+			if open > 0 {
+				if r == ']' || r == ')' {
+					open -= 1
+				}
+				elem = append(elem, r)
+			} else {
+				if r == ',' {
+					state = SKIP_WHITESPACE
+					elemstr := string(elem)
+					elemstr = strings.TrimSpace(elemstr)
+					keymap = append(keymap, elemstr)
+					elem = elem[:0]
+				} else {
+					if r == '[' || r == '(' {
+						open += 1
+					}
+					elem = append(elem, r)
+				}
+			}
+		}
+	}
+	if len(elem) > 0 {
+		elemstr := string(elem)
+		elemstr = strings.TrimSpace(elemstr)
+		keymap = append(keymap, elemstr)
+	}
+	return keymap
 }
 
 func print_viz(k *config.Keyboard, keymap []string) []string {
@@ -129,13 +183,8 @@ func mainReturnWithCode() int {
 				output = append(output, line)
 			} else {
 				// collect the elements from these lines
-				keystrs := strings.Split(line, ",")
-				for _, k := range keystrs {
-					key := strings.TrimSpace(k)
-					if len(key) > 0 && key != "\n" {
-						keymap = append(keymap, key)
-					}
-				}
+				elems := parse_elements(line)
+				keymap = append(keymap, elems...)
 			}
 		} else if state == STATE_TAIL {
 			output = append(output, line)
