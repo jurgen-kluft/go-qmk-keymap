@@ -20,7 +20,11 @@ func print_formatted(k *config.Keyboard, spacing []int, keymap []string) []strin
 	output := make([]string, 0, 8)
 	width := make([]int, len(k.Rows[0]))
 	for i := 0; i < len(width); i++ {
-		width[i] = 3
+		if len(spacing) > 0 {
+			width[i] = spacing[0]
+		} else {
+			width[i] = 8
+		}
 	}
 	for _, row := range k.Rows {
 		for i, ki := range row {
