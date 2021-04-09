@@ -1,8 +1,7 @@
 # keymap formatting for .c qmk files
 
 This utility can format a ``keymap.c`` file and particularly the keymap array with LAYOUT's.
-Adding your supported keyboard in the configuration file makes sure this utility can work with
-any keyboard layout.
+Adding configuration local to this file ensures this utility can work with any keyboard layout.
 
 ## keymap viz, aka ascii-art
 
