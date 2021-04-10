@@ -16,6 +16,11 @@ const (
 	STATE_TAIL
 )
 
+func is_comment_line(line string) bool {
+	line = strings.TrimSpace(line)
+	return strings.HasPrefix(line, "//") || strings.HasPrefix(line, "*") || strings.HasPrefix(line, "/*") || strings.HasPrefix(line, "*/")
+}
+
 func print_formatted(kb *keyboard_t, layer *layer_t) []string {
 	output := make([]string, 0, 8)
 	width := make([]int, len(kb.Rows[0]))
@@ -103,6 +108,10 @@ func parse_layer_id(line string) string {
 
 func parse_elements(line string) []string {
 	keymap := make([]string, 0, 80)
+
+	line = strings.TrimRightFunc(line, func(r rune) bool {
+		return r == ' ' || r == '/' || r == '*' || r == '\t' || r == '\\'
+	})
 
 	state := PARSER_WHITESPACE
 	open := 0
@@ -258,50 +267,57 @@ func mainReturnWithCode() int {
 	state := STATE_HEAD
 	layer := &layer_t{}
 	for _, line := range lines {
+
 		if strings.Contains(line, keymapvizbegin) {
 			doviz = doviz | 1
 		} else if strings.Contains(line, keymapvizend) {
 			doviz = doviz | 2
 		}
-		if state == STATE_HEAD {
-			if strings.Contains(line, keymaps_begin) {
-				state = STATE_KEYMAPS
-				output = append(output, line)
-			} else {
-				output = append(output, line)
-			}
-		} else if state == STATE_KEYMAPS {
-			if strings.Contains(line, keymap_begin) {
-				layer_name := parse_layer_id(line)
-				layer = &layer_t{Name: layer_name, Keymap: make([]string, 0, 104)}
-				layers[layer_name] = layer
-				state = STATE_KEYMAP
-				output = append(output, line)
-			} else if strings.Compare(strings.TrimSpace(line), keymaps_end) == 0 {
-				state = STATE_TAIL
-				output = append(output, line)
-			} else {
-				output = append(output, line)
-			}
-		} else if state == STATE_KEYMAP {
-			if strings.TrimSpace(line) == keymap_end1 || strings.TrimSpace(line) == keymap_end2 {
-				// do we have a parsed keymap, if so write it out here in a formatted form
-				//if len(keymap) == keyboard.numkeys {
-				formatted := print_formatted(kb, layer)
-				for _, l := range formatted {
-					output = append(output, l)
-				}
-				//}
-				layer = nil
-				state = STATE_KEYMAPS
-				output = append(output, line)
-			} else {
-				// collect the elements from these lines
-				elems := parse_elements(line)
-				layer.Keymap = append(layer.Keymap, elems...)
-			}
-		} else if state == STATE_TAIL {
+
+		// here we check if the line is a '//' comment and skip processing it
+		if is_comment_line(line) {
 			output = append(output, line)
+		} else {
+			if state == STATE_HEAD {
+				if strings.Contains(line, keymaps_begin) {
+					state = STATE_KEYMAPS
+					output = append(output, line)
+				} else {
+					output = append(output, line)
+				}
+			} else if state == STATE_KEYMAPS {
+				if strings.Contains(line, keymap_begin) {
+					layer_name := parse_layer_id(line)
+					layer = &layer_t{Name: layer_name, Keymap: make([]string, 0, 104)}
+					layers[layer_name] = layer
+					state = STATE_KEYMAP
+					output = append(output, line)
+				} else if strings.Compare(strings.TrimSpace(line), keymaps_end) == 0 {
+					state = STATE_TAIL
+					output = append(output, line)
+				} else {
+					output = append(output, line)
+				}
+			} else if state == STATE_KEYMAP {
+				if strings.TrimSpace(line) == keymap_end1 || strings.TrimSpace(line) == keymap_end2 {
+					// do we have a parsed keymap, if so write it out here in a formatted form
+					//if len(keymap) == keyboard.numkeys {
+					formatted := print_formatted(kb, layer)
+					for _, l := range formatted {
+						output = append(output, l)
+					}
+					//}
+					layer = nil
+					state = STATE_KEYMAPS
+					output = append(output, line)
+				} else {
+					// collect the elements from these lines
+					elems := parse_elements(line)
+					layer.Keymap = append(layer.Keymap, elems...)
+				}
+			} else if state == STATE_TAIL {
+				output = append(output, line)
+			}
 		}
 	}
 
