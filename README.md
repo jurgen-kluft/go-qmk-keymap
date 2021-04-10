@@ -113,6 +113,13 @@ qmk-keyboard-format:json:end
 */
 ```
 
+## Visual Studio Code (vscode)
+
+You can use this formatter by installing an extension called ```Custom Local Formatters``` and by adding a formatter entry for ```.c``` files and pointing to this utility. For Mac this utility needs to be in a directory that is known by your environment, for Windows the root of the workspace will work.
+
+https://marketplace.visualstudio.com/items?itemName=jkillian.custom-local-formatters
+
+
 ## keymap viz, aka ascii-art
 
 When you put the following 2 lines in your keymap.c file, the tool will insert textual diagram of your layer(s).
