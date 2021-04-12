@@ -21,6 +21,28 @@ func is_comment_line(line string) bool {
 	return strings.HasPrefix(line, "//") || strings.HasPrefix(line, "*") || strings.HasPrefix(line, "/*") || strings.HasPrefix(line, "*/")
 }
 
+func sprint_element(element string, separator string, width int) string {
+	// left align the element
+	// followed by the seperator
+	// padded with space until reaching width
+
+	str := make([]rune, 0, width+1)
+	cnt := 0
+	for _, c := range element {
+		str = append(str, c)
+		cnt += 1
+	}
+	for _, c := range separator {
+		str = append(str, c)
+		cnt += 1
+	}
+	for cnt < width {
+		str = append(str, ' ')
+		cnt += 1
+	}
+	return string(str)
+}
+
 func print_formatted(kb *keyboard_t, layer *layer_t) []string {
 	output := make([]string, 0, 8)
 	width := make([]int, len(kb.Rows[0]))
@@ -48,30 +70,22 @@ func print_formatted(kb *keyboard_t, layer *layer_t) []string {
 			}
 		}
 	}
-	key_formats := make([]string, len(width))
-	for i, w := range width {
-		key_formats[i] = fmt.Sprintf("%s%d%s", "%-", w, "s")
-	}
 
-	for ri, row := range kb.Rows {
-		separator := ""
+	for _, row := range kb.Rows {
 		line := "    "
 		for i, ki := range row {
+			last_column := ki == (kb.Numkeys - 1)
 			if ki < 0 {
-				line = line + fmt.Sprintf(key_formats[i], " ")
-				line = line + "  "
+				line = line + sprint_element("", " ", width[i]+2)
 			} else {
-				line = line + fmt.Sprint(separator)
-				line = line + fmt.Sprintf(key_formats[i], layer.Keymap[ki])
-				separator = ", "
+				if last_column {
+					line = line + sprint_element(layer.Keymap[ki], " ", width[i]+2)
+				} else {
+					line = line + sprint_element(layer.Keymap[ki], ",", width[i]+2)
+				}
 			}
 		}
-
-		// the last row does not need a comma at the end
-		if ri < (len(kb.Rows) - 1) {
-			line = line + ","
-		}
-
+		line = line + " "
 		output = append(output, line)
 	}
 	return output
