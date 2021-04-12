@@ -72,7 +72,7 @@ func print_formatted(kb *keyboard_t, layer *layer_t) []string {
 	}
 
 	for _, row := range kb.Rows {
-		line := "    "
+		line := ""
 		for i, ki := range row {
 			last_column := ki == (kb.Numkeys - 1)
 			if ki < 0 {
@@ -384,10 +384,10 @@ type keyboard_t struct {
 	Name       string            `json:"name"`
 	Numkeys    int               `json:"numkeys"`
 	Rows       [][]int           `json:"rows"`
+	Spacing    []int             `json:"spacing"`
 	VizWidth   int               `json:"vizcellwidth"`
 	VizBoard   []string          `json:"vizboard"`
 	VizSymbols map[string]string `json:"vizsymbols"`
-	Spacing    []int             `json:"spacing"`
 }
 
 type layer_t struct {
