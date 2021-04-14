@@ -54,24 +54,24 @@ func print_formatted(kb *keyboard_t, layer *layer_t) []string {
 		}
 	}
 	for _, row := range kb.Rows {
-		for i, ki := range row {
+		for ci, ki := range row {
 			if ki >= 0 {
 				key := layer.Keymap[ki]
-				if len(key) > width[i] {
-					width[i] = len(key)
+				if len(key) > width[ci] {
+					width[ci] = len(key)
 				}
 			} else {
 				ki = -ki
 				if ki >= 0 && ki < len(kb.Spacing) {
-					if kb.Spacing[ki] > width[i] {
-						width[i] = kb.Spacing[ki]
+					if kb.Spacing[ki] > width[ci] {
+						width[ci] = kb.Spacing[ki]
 					}
 				}
 			}
 		}
 	}
 
-	for _, row := range kb.Rows {
+	for ri, row := range kb.Rows {
 		line := ""
 		for i, ki := range row {
 			last_column := ki == (kb.Numkeys - 1)
@@ -85,7 +85,10 @@ func print_formatted(kb *keyboard_t, layer *layer_t) []string {
 				}
 			}
 		}
-		line = line + " "
+
+		// add eol part
+		line = line + layer.EOLs[ri]
+
 		output = append(output, line)
 	}
 	return output
@@ -120,12 +123,22 @@ func parse_layer_id(line string) string {
 	return idstr
 }
 
-func parse_elements(line string) []string {
+func parse_elements(line string) ([]string, string) {
 	keymap := make([]string, 0, 80)
 
-	line = strings.TrimRightFunc(line, func(r rune) bool {
-		return r == ' ' || r == '/' || r == '*' || r == '\t' || r == '\\'
-	})
+	eol_pos := len(line)
+	for cursor, r := range line {
+		if r == '/' || r == '\\' {
+			eol_pos = cursor
+			break
+		}
+	}
+
+	// snip the end of the line part and remember it
+	end_of_line_part := line[eol_pos:]
+
+	// continue with the trimmed line
+	line = line[0:eol_pos]
 
 	state := PARSER_WHITESPACE
 	open := 0
@@ -164,7 +177,7 @@ func parse_elements(line string) []string {
 		elemstr = strings.TrimSpace(elemstr)
 		keymap = append(keymap, elemstr)
 	}
-	return keymap
+	return keymap, end_of_line_part
 }
 
 func parse_viz_layer_names(line string) []string {
@@ -326,8 +339,9 @@ func mainReturnWithCode() int {
 					output = append(output, line)
 				} else {
 					// collect the elements from these lines
-					elems := parse_elements(line)
+					elems, eol_part := parse_elements(line)
 					layer.Keymap = append(layer.Keymap, elems...)
+					layer.EOLs = append(layer.EOLs, eol_part)
 				}
 			} else if state == STATE_TAIL {
 				output = append(output, line)
@@ -393,6 +407,7 @@ type keyboard_t struct {
 type layer_t struct {
 	Name   string
 	Keymap []string
+	EOLs   []string
 }
 
 // key symbols

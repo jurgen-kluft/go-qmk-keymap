@@ -38,7 +38,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  *                        `----------------------------------'  `----------------------------------'
  */
     [_QWERTY] = LAYOUT(
-      LT(_RAISE, KC_ESC),       KC_Q,   KC_W,   KC_E,   KC_R,   KC_T,                                         KC_Y,    KC_U,    KC_I,    KC_O,    KC_P,    KC_PIPE,
+      LT(_RAISE, KC_ESC),       KC_Q,   KC_W,   KC_E,   KC_R,   KC_T,                                         KC_Y,    KC_U,    KC_I,    KC_O,    KC_P,    KC_PIPE,   // this is a test comment
       MT(MOD_LCTL, KC_BSPC),   KC_A,   KC_S,   KC_D,   KC_F,   KC_G,                                         KC_H,    KC_J,    KC_K,    KC_L,    KC_SCLN, KC_QUOT,
       KC_LSFT,                 KC_Z,   KC_X,   KC_C,   KC_V,   KC_B,   KC_LSFT,   KC_LSFT, KC_LSFT, KC_LSFT, KC_N,    KC_M,    KC_COMM, KC_DOT,  KC_SLSH, KC_MINS,
               KC_LGUI, KC_DEL, MT(MOD_LALT, KC_ENT), LT(_LOWER, KC_SPC), LT(_RAISE, KC_ESC), LT(_LOWER, KC_ENT), LT(_RAISE, KC_SPC), KC_TAB,  KC_BSPC, KC_RALT
@@ -256,7 +256,6 @@ qmk-keyboard-format:json:begin
     "vizsymbols": {
         "_______": "     ",
         "KC_TRANS": "     ",
-
         "KC_0": "  0  " ,
         "KC_1": "  1  " ,
         "KC_2": "  2  " ,
@@ -267,7 +266,6 @@ qmk-keyboard-format:json:begin
         "KC_7": "  7  " ,
         "KC_8": "  8  " ,
         "KC_9": "  9  " ,
-
         "KC_A": "  A  " ,
         "KC_B": "  B  " ,
         "KC_C": "  C  " ,
@@ -295,10 +293,34 @@ qmk-keyboard-format:json:begin
         "KC_Y": "  Y  " ,
         "KC_Z": "  Z  " ,
         "KC_COMMA": "  ,  ",
+        "KC_COMM": "  ,  ",
         "KC_DOT": "  .  ",
         "KC_SCOLON": "  ;  ",
         "KC_SCLN": "  :  ",
-        "KC_SLASH": "  /  ",
+        "KC_SLASH": "  \/  ",
+        "KC_SLSH": "  \/  ",
+        "KC_BSLS": "  \\  ",
+        "KC_EXLM": "  !  ",
+        "KC_PIPE": "  |  ",
+        "KC_QUOT": "  '  ",
+        "KC_HASH": "  #  ",
+        "KC_AMPR": "  &  ",
+        "KC_PERC": "  %  ",
+        "KC_AT": "  @  ",
+        "KC_DLR": "  $  ",
+        "KC_CIRC": "  ^  ",
+        "KC_EQL": "  =  ",
+        "KC_ASTR": "  *  ",
+        "KC_MINS": "  -  ",
+        "KC_PLUS": "  +  ",
+        "KC_LCBR": "  {  ",
+        "KC_RCBR": "  }  ",
+        "KC_LPRN": "  (  ",
+        "KC_RPRN": "  )  ",
+        "KC_GRV": "  `  ",
+        "KC_LBRC": "  [  ",
+        "KC_RBRC": "  ]  ",
+        "KC_TILD": "  ~  ",
         "KC_ESC": "  ⎋  " ,
         "KC_CUT": "  ✄  " ,
         "KC_UNDO": "  ↶  " ,
