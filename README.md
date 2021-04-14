@@ -3,9 +3,13 @@
 This utility can format a ``keymap.c`` file and particularly the keymap array with LAYOUT's.
 Adding configuration local to this file ensures this utility can work with any keyboard layout.
 
+NOTE: The state of this utility is still 'Alpha', things might change and bugs might exist.
+
 ## configuration
 
  Here an example of the configuration that you can add at the bottom of your ```keymap.c``` file.
+
+ The 'spacing' array is used by the negative indices in the 'rows' definition, you can add/remove items to fit your needs.
 
 ```c++
 /*
