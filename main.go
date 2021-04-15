@@ -144,15 +144,18 @@ func parse_elements(line string) ([]string, string) {
 	open := 0
 	elem := make([]rune, 0, 60)
 	for _, r := range line {
+
 		if state == PARSER_WHITESPACE {
 			if unicode.IsSpace(r) == false {
 				state = PARSER_ARRAYITEM
-				elem = elem[:0]
-				elem = append(elem, r)
 			}
-		} else if state == PARSER_ARRAYITEM {
+		}
+
+		if state == PARSER_ARRAYITEM {
 			if open > 0 {
-				if r == ']' || r == ')' {
+				if r == '[' || r == '(' {
+					open += 1
+				} else if r == ']' || r == ')' {
 					open -= 1
 				}
 				elem = append(elem, r)
@@ -175,7 +178,9 @@ func parse_elements(line string) ([]string, string) {
 	if len(elem) > 0 {
 		elemstr := string(elem)
 		elemstr = strings.TrimSpace(elemstr)
-		keymap = append(keymap, elemstr)
+		if len(elemstr) > 0 {
+			keymap = append(keymap, elemstr)
+		}
 	}
 	return keymap, end_of_line_part
 }
