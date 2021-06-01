@@ -250,14 +250,14 @@ func print_viz(k *keyboard_t, layer *layer_t) []string {
 
 func main() { os.Exit(mainReturnWithCode()) }
 
-func isEmit(line string, kb *keyboard_t) bool {
+func findEmit(line string, kb *keyboard_t) int {
 	line = strings.TrimSpace(line)
-	for _, emitat := range kb.VizEmits {
-		if strings.Compare(line, emitat) == 0 {
-			return true
+	for emitidx, emitat := range kb.VizEmits {
+		if strings.Compare(line, emitat.Line) == 0 {
+			return emitidx
 		}
 	}
-	return false
+	return -1
 }
 
 func mainReturnWithCode() int {
@@ -362,8 +362,9 @@ func mainReturnWithCode() int {
 		doviz := 0
 		output_temp := make([]string, 0, 1024)
 		for _, line := range output {
-			if isEmit(line, kb) {
-				layer_name := parse_layer_id(line)
+			emitindex := findEmit(line, kb)
+			if emitindex >= 0 {
+				layer_name := kb.VizEmits[emitindex].Layer
 				if layer, ok := layers[layer_name]; ok {
 					layer_viz := print_viz(kb, layer)
 					output_temp = append(output_temp, layer_viz...)
@@ -394,13 +395,18 @@ func (r *keyboard_t) Marshal() ([]byte, error) {
 	return json.Marshal(r)
 }
 
+type vizemit_t struct {
+	Line  string `json:"line"`
+	Layer string `json:"layer"`
+}
+
 type keyboard_t struct {
 	Name       string            `json:"name"`
 	Numkeys    int               `json:"numkeys"`
 	Rows       [][]int           `json:"rows"`
 	Spacing    []int             `json:"spacing"`
 	VizWidth   int               `json:"vizcellwidth"`
-	VizEmits   []string          `json:"vizemits"`
+	VizEmits   []vizemit_t       `json:"vizemits"`
 	VizLine    string            `json:"vizline"`
 	VizBoard   []string          `json:"vizboard"`
 	VizSymbols map[string]string `json:"vizsymbols"`

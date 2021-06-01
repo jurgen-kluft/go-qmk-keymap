@@ -32,13 +32,13 @@ enum tap_dance_codes {
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   //# .-----------------------------------------------.                                             .-----------------------------------------------.
-  //# | ARENT | ARENT | ARENT | ARENT | ARENT | ARENT |                                             | TO(1) | TO(2) | ARENT | ARENT | ARENT | ARENT |
+  //# | _____ | _____ | _____ | _____ | _____ | _____ |                                             | TO(1) | TO(2) | _____ | _____ | _____ | _____ |
   //# |-------+-------+-------+-------+-------+-------|                                             |-------+-------+-------+-------+-------+-------|
   //# | TG(9) | G(10) | TG(4) |   Q   |   W   |   E   |                                             |   R   |   T   | GHT)) | EFT)) |   Y   |   U   |
   //# |-------+-------+-------+-------+-------+-------|-------+-------.             .-------+-------|-------+-------+-------+-------+-------+-------|
-  //# |   I   |   O   |   P   | ARENT | LSFT) |   A   |   S   |   D   |             |   F   |   G   | EFT)) | GHT)) |   H   |   J   |   K   |   L   |
+  //# |   I   |   O   |   P   | _____ | LSFT) |   A   |   S   |   D   |             |   F   |   G   | EFT)) | GHT)) |   H   |   J   |   K   |   L   |
   //# .-------+-------+-------+-------+-------+-------+-------+-------|             |-------+-------.-------+-------+-------+-------+-------+-------.
-  //#                         |   ;   |   ⇪   | ARENT |   Z   |   X   |             |   C   |   V   |   B   |   N   |   M   |                        
+  //#                         |   ;   |   ⇪   | _____ |   Z   |   X   |             |   C   |   V   |   B   |   N   |   M   |                        
   //#                         .-------+-------+-------+-------+-------.             .-------|-------|-------|-------|-------.                        
   [0] = LAYOUT(
     KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, TO(1),                  TO(2),                KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, TG(9),          TG(10),         
@@ -97,13 +97,13 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
                                                                     KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,   KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT                                                                  
   ),
   //# .-----------------------------------------------.                                             .-----------------------------------------------.
-  //# | ARENT | ARENT | ARENT | ARENT | ARENT | ARENT |                                             | ARENT | ARENT | ARENT | ARENT | ARENT | ARENT |
+  //# | _____ | _____ | _____ | _____ | _____ | _____ |                                             | _____ | _____ | _____ | _____ | _____ | _____ |
   //# |-------+-------+-------+-------+-------+-------|                                             |-------+-------+-------+-------+-------+-------|
-  //# | KC_NO | KC_NO | KC_NO | ARENT | KC_W) | SCAPE |                                             |   ⏎   |   ⭾   | ARENT | ARENT |   ⎀   |   ⇞   |
+  //# | KC_NO | KC_NO | KC_NO | _____ | KC_W) | SCAPE |                                             |   ⏎   |   ⭾   | _____ | _____ |   ⎀   |   ⇞   |
   //# |-------+-------+-------+-------+-------+-------|-------+-------.             .-------+-------|-------+-------+-------+-------+-------+-------|
-  //# |   ⇤   | ARENT | ARENT | KC_NO | ARENT |   ⌘   |   ⎇   | LCTRL |             | SHIFT |   ⌦  | ARENT | ARENT |   ◁   |   ▽   |   △   |   ▷   |
+  //# |   ⇤   | _____ | _____ | KC_NO | _____ |   ⌘   |   ⎇   | LCTRL |             | SHIFT |   ⌦  | _____ | _____ |   ◁   |   ▽   |   △   |   ▷   |
   //# .-------+-------+-------+-------+-------+-------+-------+-------|             |-------+-------.-------+-------+-------+-------+-------+-------.
-  //#                         | ARENT | ARENT | ARENT | _UNDO | C_CUT |             | _COPY | PASTE |   ⌫   |   ⌦  |   ⇟   |                        
+  //#                         | _____ | _____ | _____ | _UNDO | C_CUT |             | _COPY | PASTE |   ⌫   |   ⌦  |   ⇟   |                        
   //#                         .-------+-------+-------+-------+-------.             .-------|-------|-------|-------|-------.                        
   [7] = LAYOUT(
     KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,   KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_NO,          KC_NO,          
@@ -355,8 +355,8 @@ qmk-keyboard-format:json:begin
     ],
     "vizcellwidth": 5,
     "vizemits": [
-        "[0] = LAYOUT(",
-        "[7] = LAYOUT("
+        { "line": "[0] = LAYOUT(", "layer": "0" },
+        { "line": "[7] = LAYOUT(", "layer": "7" }
     ],
     "vizline": "//#",
     "vizboard": [
@@ -372,6 +372,7 @@ qmk-keyboard-format:json:begin
     ],
     "vizsymbols": {
         "_______": "     ",
+        "KC_TRANSPARENT": "_____",
         "KC_TRANS": "     ",
         "KC_0": "  0  " ,
         "KC_1": "  1  " ,

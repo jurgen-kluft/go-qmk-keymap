@@ -202,8 +202,8 @@ qmk-keyboard-format:json:begin
     ],
     "vizcellwidth": 5,
     "vizemits": [
-        "[_QWERTY] = LAYOUT(",
-        "[_RAISE] = LAYOUT("
+        { "line": "[_QWERTY] = LAYOUT(", "layer": "_QWERTY" },
+        { "line": "[_RAISE] = LAYOUT(", "layer": "_RAISE" }
     ],
     "vizline": "//#",
     "vizboard": [
