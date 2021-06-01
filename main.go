@@ -250,6 +250,16 @@ func print_viz(k *keyboard_t, layer *layer_t) []string {
 
 func main() { os.Exit(mainReturnWithCode()) }
 
+func isEmit(line string, kb *keyboard_t) bool {
+	line = strings.TrimSpace(line)
+	for _, emitat := range kb.VizEmits {
+		if strings.Compare(line, emitat) == 0 {
+			return true
+		}
+	}
+	return false
+}
+
 func mainReturnWithCode() int {
 	scanner := bufio.NewScanner(os.Stdin)
 	lines := make([]string, 0, 4096)
@@ -288,27 +298,19 @@ func mainReturnWithCode() int {
 	keymap_begin := "LAYOUT("
 	keymap_end1 := "),"
 	keymap_end2 := ")"
-	keymapvizbegin := "qmk-keyboard-format:keymapviz:begin"
-	keymapvizend := "qmk-keyboard-format:keymapviz:end"
 
 	output := make([]string, 0, 1024)
 
 	layers := make(map[string]*layer_t)
 
-	doviz := 0
 	state := STATE_HEAD
 	layer := &layer_t{}
 	for _, line := range lines {
-
-		if strings.Contains(line, keymapvizbegin) {
-			doviz = doviz | 1
-		} else if strings.Contains(line, keymapvizend) {
-			doviz = doviz | 2
-		}
-
 		// here we check if the line is a '//' comment and skip processing it
 		if is_comment_line(line) {
-			output = append(output, line)
+			if strings.HasPrefix(strings.TrimSpace(line), kb.VizLine) == false {
+				output = append(output, line)
+			}
 		} else {
 			if state == STATE_HEAD {
 				if strings.Contains(line, keymaps_begin) {
@@ -354,24 +356,17 @@ func mainReturnWithCode() int {
 		}
 	}
 
-	if doviz == 3 {
+	if len(kb.VizEmits) > 0 {
 		// iterate over all output lines and identify locations where we need to output ascii-art for a layer
-		doviz = 0
-		layers_to_viz := make([]string, 0, 4)
+
+		doviz := 0
 		output_temp := make([]string, 0, 1024)
 		for _, line := range output {
-			if doviz == 0 && strings.Contains(line, keymapvizbegin) {
-				doviz = 1
-				layers_to_viz = parse_viz_layer_names(line)
-				output_temp = append(output_temp, line)
-			} else if doviz == 1 && strings.Contains(line, keymapvizend) {
-				// output the necessary layers as ascii-art
-				for _, ln := range layers_to_viz {
-					if layer, ok := layers[ln]; ok {
-						output_temp = append(output_temp, fmt.Sprintf("  // Layer %s", ln))
-						layer_viz := print_viz(kb, layer)
-						output_temp = append(output_temp, layer_viz...)
-					}
+			if isEmit(line, kb) {
+				layer_name := parse_layer_id(line)
+				if layer, ok := layers[layer_name]; ok {
+					layer_viz := print_viz(kb, layer)
+					output_temp = append(output_temp, layer_viz...)
 				}
 				output_temp = append(output_temp, line)
 				doviz = 0
@@ -405,6 +400,8 @@ type keyboard_t struct {
 	Rows       [][]int           `json:"rows"`
 	Spacing    []int             `json:"spacing"`
 	VizWidth   int               `json:"vizcellwidth"`
+	VizEmits   []string          `json:"vizemits"`
+	VizLine    string            `json:"vizline"`
 	VizBoard   []string          `json:"vizboard"`
 	VizSymbols map[string]string `json:"vizsymbols"`
 }
