@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"encoding/json"
 	"fmt"
+	"log"
 	"os"
 	"strings"
 	"unicode"
@@ -248,7 +249,15 @@ func print_viz(k *keyboard_t, layer *layer_t) []string {
 	return keyboardviz
 }
 
-func main() { os.Exit(mainReturnWithCode()) }
+func main() {
+	err := mainReturnWithCode()
+	if err == nil {
+		os.Exit(0)
+	}
+
+	log.Fatal(err)
+	os.Exit(-1)
+}
 
 func findEmit(line string, kb *keyboard_t) int {
 	line = strings.TrimSpace(line)
@@ -260,7 +269,7 @@ func findEmit(line string, kb *keyboard_t) int {
 	return -1
 }
 
-func mainReturnWithCode() int {
+func mainReturnWithCode() error {
 	scanner := bufio.NewScanner(os.Stdin)
 	lines := make([]string, 0, 4096)
 	for scanner.Scan() {
@@ -284,13 +293,12 @@ func mainReturnWithCode() int {
 	}
 
 	if json == "" {
-		return -1
+		return fmt.Errorf("No configuration available")
 	}
 
 	kb, err := UnmarshalKeyboard([]byte(json))
 	if kb == nil || err != nil {
-		fmt.Printf("error, cannot unmarshall json")
-		return -2
+		return err
 	}
 
 	keymaps_begin := "keymaps[]"
@@ -300,7 +308,6 @@ func mainReturnWithCode() int {
 	keymap_end2 := ")"
 
 	output := make([]string, 0, 1024)
-
 	layers := make(map[string]*layer_t)
 
 	state := STATE_HEAD
@@ -382,7 +389,7 @@ func mainReturnWithCode() int {
 		fmt.Println(l)
 	}
 
-	return 0
+	return nil
 }
 
 func UnmarshalKeyboard(data []byte) (*keyboard_t, error) {
