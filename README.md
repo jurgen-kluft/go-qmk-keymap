@@ -128,6 +128,13 @@ qmk-keyboard-format:json:end
 */
 ```
 
+## Commandline
+
+Once you have compiled an executable of this utility (go build or go install) you can then use it as process.
+You need to provide the content of your .c file to the application and write the stdout of the application
+to the same or otherwise a new file.
+`cat main.c | go-qmk-keymap(.exe) > main.c`
+
 ## Visual Studio Code (vscode)
 
 You can use this formatter by installing an extension called [Custom Local Formatters](https://marketplace.visualstudio.com/items?itemName=jkillian.custom-local-formatters) and by adding a formatter entry for ```.c``` files and pointing to this utility. For Mac this utility needs to be in a directory that is known by your environment, for Windows the root of the workspace will work.
