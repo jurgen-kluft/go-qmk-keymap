@@ -130,10 +130,12 @@ qmk-keyboard-format:json:end
 
 ## Commandline
 
-Once you have compiled an executable of this utility (go build or go install) you can then use it as process.
+Once you have compiled an executable of this utility (`go build` or `go install`) you can then use it as process.
 You need to provide the content of your .c file to the application and write the stdout of the application
 to the same or otherwise a new file.
 `cat main.c | go-qmk-keymap(.exe) > main.c`
+You can also run the program without compile step with this command:
+`cat keymap.c | go run main.go > formatted-keymap.c`
 
 ## Visual Studio Code (vscode)
 
