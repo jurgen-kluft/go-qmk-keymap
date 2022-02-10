@@ -10,6 +10,10 @@ jobs:
 
   build:
     runs-on: ubuntu-latest
+    env:
+      GO111MODULE: off
+      GOPROXY: "https://proxy.golang.org"    
+
     steps:
     - uses: actions/checkout@v2
 
@@ -19,9 +23,10 @@ jobs:
         go-version: 1.13.7
 
     - name: Build
-      run: |
-        GO111MODULE=off go get
-        go build -v
+      env:
+        GO111MODULE: off
+        GOPROXY: "https://proxy.golang.org"    
+      run: go build .
 
     - name: Test
       run: go test -v
