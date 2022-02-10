@@ -22,6 +22,11 @@ jobs:
       with:
         go-version: 1.13.7
 
+    - name: Install dependencies
+      run: |
+        go version
+        go get github.com/jurgen-kluft/go-qmk-keymap/svg
+
     - name: Build
       env:
         GO111MODULE: off
