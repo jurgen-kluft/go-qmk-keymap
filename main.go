@@ -8,6 +8,8 @@ import (
 	"os"
 	"strings"
 	"unicode"
+
+	"github.com/jurgen-kluft/go-qmk-keymap/svg"
 )
 
 const (
@@ -147,7 +149,7 @@ func parse_elements(line string) ([]string, string) {
 	for _, r := range line {
 
 		if state == PARSER_WHITESPACE {
-			if unicode.IsSpace(r) == false {
+			if !unicode.IsSpace(r) {
 				state = PARSER_ARRAYITEM
 			}
 		}
@@ -219,9 +221,7 @@ func index_to_viz(index int) string {
 
 func print_viz(k *keyboard_t, layer *layer_t) []string {
 	keyboardviz := make([]string, 0, 32)
-	for _, line := range k.VizBoard {
-		keyboardviz = append(keyboardviz, line)
-	}
+	keyboardviz = append(keyboardviz, k.VizBoard...)
 
 	spacing := "                          "
 	for ki, key := range layer.Keymap {
@@ -240,13 +240,78 @@ func print_viz(k *keyboard_t, layer *layer_t) []string {
 
 		marker := index_to_viz(ki)
 		for i := 0; i < len(keyboardviz); i++ {
-			if strings.Contains(keyboardviz[i], marker) {
-				keyboardviz[i] = strings.Replace(keyboardviz[i], marker, keysymbol, 1)
-			}
+			keyboardviz[i] = strings.Replace(keyboardviz[i], marker, keysymbol, 1)
 		}
 	}
 
 	return keyboardviz
+}
+
+// convert all know string characters to svg escape code
+func escape_svg(s string) string {
+	output := make([]rune, 0, len(s))
+	for _, r := range s {
+		if r == '↑' {
+			output = append(output, '&', 'u', 'a', 'r', 'r', ';')
+		} else if r == '↓' {
+			output = append(output, '&', 'f', 'a', 'r', 'r', ';')
+		} else if r == '←' {
+			output = append(output, '&', 'l', 'a', 'r', 'l', ';')
+		} else if r == '→' {
+			output = append(output, '&', 'r', 'a', 'r', 'r', ';')
+		} else if r == '<' {
+			output = append(output, '&', 'l', 't', ';')
+		} else if r == '>' {
+			output = append(output, '&', 'g', 't', ';')
+		} else if r == '&' {
+			output = append(output, '&', 'a', 'm', 'p', ';')
+		} else if r == '"' {
+			output = append(output, '&', 'q', 'u', 'o', 't', ';')
+		} else if r == '\'' {
+			output = append(output, '&', 'a', 'p', 'o', 's', ';')
+		} else {
+			output = append(output, r)
+		}
+	}
+	return string(output)
+}
+
+func print_svg(keyboard *keyboard_t, layers map[string]*layer_t) {
+
+	svgLayers := make([]svg.Layer_t, 0, 32)
+	for _, layername := range keyboard.SvgLayers {
+		layer, has_layer := layers[layername]
+		if has_layer {
+			svgLayer := svg.Layer_t{}
+			svgLayer.Matrix = [][]svg.Key_t{}
+			svgLayer.Name = layer.Name
+
+			for _, row := range keyboard.SvgMapping {
+				svgRow := make([]svg.Key_t, 0, 20)
+				for _, key := range row {
+					svgKey := svg.Key_t{}
+					svgKey.Exists = key >= 0
+					if key >= 0 {
+						svgKey.Key = layer.Keymap[key]
+						svgKey.Key = keyboard.VizSymbols[svgKey.Key]
+						svgKey.Key = strings.TrimSpace(svgKey.Key)
+						svgKey.Key = escape_svg(svgKey.Key)
+					}
+					svgKey.Class = ""
+					svgRow = append(svgRow, svgKey)
+				}
+				svgLayer.Matrix = append(svgLayer.Matrix, svgRow)
+			}
+			svgLayers = append(svgLayers, svgLayer)
+		}
+	}
+
+	svgLines := svg.Print(svgLayers)
+	fmt.Println("/*")
+	for _, l := range svgLines {
+		fmt.Println(l)
+	}
+	fmt.Println("*/")
 }
 
 func main() {
@@ -293,7 +358,7 @@ func mainReturnWithCode() error {
 	}
 
 	if json == "" {
-		return fmt.Errorf("No configuration available")
+		return fmt.Errorf("no configuration available")
 	}
 
 	kb, err := UnmarshalKeyboard([]byte(json))
@@ -315,7 +380,7 @@ func mainReturnWithCode() error {
 	for _, line := range lines {
 		// here we check if the line is a '//' comment and skip processing it
 		if is_comment_line(line) {
-			if strings.HasPrefix(strings.TrimSpace(line), kb.VizLine) == false {
+			if !strings.HasPrefix(strings.TrimSpace(line), kb.VizLine) {
 				output = append(output, line)
 			}
 		} else {
@@ -344,9 +409,7 @@ func mainReturnWithCode() error {
 					// do we have a parsed keymap, if so write it out here in a formatted form
 					//if len(keymap) == keyboard.numkeys {
 					formatted := print_formatted(kb, layer)
-					for _, l := range formatted {
-						output = append(output, l)
-					}
+					output = append(output, formatted...)
 					//}
 					layer = nil
 					state = STATE_KEYMAPS
@@ -389,6 +452,8 @@ func mainReturnWithCode() error {
 		fmt.Println(l)
 	}
 
+	print_svg(kb, layers)
+
 	return nil
 }
 
@@ -417,6 +482,8 @@ type keyboard_t struct {
 	VizLine    string            `json:"vizline"`
 	VizBoard   []string          `json:"vizboard"`
 	VizSymbols map[string]string `json:"vizsymbols"`
+	SvgLayers  []string          `json:"svglayers"`
+	SvgMapping [][]int           `json:"svgmapping"`
 }
 
 type layer_t struct {
