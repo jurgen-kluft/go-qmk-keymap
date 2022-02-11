@@ -113,7 +113,7 @@ func Print(layers []Layer_t) []string {
 	s.LayerW = 2*s.HandW + s.OuterPadW
 	s.LayerH = s.HandH
 	s.BoardW = s.LayerW + 2*s.OuterPadW
-	s.BoardH = len(layers)*s.LayerH + (len(layers)+1)*s.OuterPadH
+	s.BoardH = s.KeyH + len(layers)*(s.LayerH+s.OuterPadH+s.KeyspaceH)
 
 	s.lines = []string{}
 	s.lines = append(s.lines, "<svg width=\""+fmt.Sprintf("%d", s.BoardW)+"\" height=\""+fmt.Sprintf("%d", s.BoardH)+"\" viewBox=\"0 0 "+fmt.Sprintf("%d", s.BoardW)+" "+fmt.Sprintf("%d", s.BoardH)+"\" xmlns=\"http://www.w3.org/2000/svg\">")
@@ -152,9 +152,15 @@ func (s *instance) print_layer(x int, y int, layer Layer_t) {
 }
 
 func (s *instance) print_layers(layers []Layer_t) {
-	y := s.OuterPadH
+	x := s.OuterPadW
+	y := s.LineSpacing + s.OuterPadH
+
 	for _, layer := range layers {
-		s.print_layer(s.OuterPadW, y, layer)
+
+		line := fmt.Sprintf("<text x=\"%d\" y=\"%d\" text-anchor=\"left\" class=\"key-text\">%s</text>", x, y-s.LineSpacing, layer.Name)
+		s.lines = append(s.lines, line)
+
+		s.print_layer(x, y, layer)
 		y += s.LayerH + s.OuterPadH + s.KeyspaceH
 	}
 }

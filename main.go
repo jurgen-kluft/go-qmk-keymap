@@ -251,15 +251,7 @@ func print_viz(k *keyboard_t, layer *layer_t) []string {
 func escape_svg(s string) string {
 	output := make([]rune, 0, len(s))
 	for _, r := range s {
-		if r == '↑' {
-			output = append(output, '&', 'u', 'a', 'r', 'r', ';')
-		} else if r == '↓' {
-			output = append(output, '&', 'f', 'a', 'r', 'r', ';')
-		} else if r == '←' {
-			output = append(output, '&', 'l', 'a', 'r', 'l', ';')
-		} else if r == '→' {
-			output = append(output, '&', 'r', 'a', 'r', 'r', ';')
-		} else if r == '<' {
+		if r == '<' {
 			output = append(output, '&', 'l', 't', ';')
 		} else if r == '>' {
 			output = append(output, '&', 'g', 't', ';')
@@ -284,7 +276,7 @@ func print_svg(keyboard *keyboard_t, layers map[string]*layer_t) {
 		if has_layer {
 			svgLayer := svg.Layer_t{}
 			svgLayer.Matrix = [][]svg.Key_t{}
-			svgLayer.Name = layer.Name
+			svgLayer.Name = keyboard.VizSymbols[layer.Name]
 
 			for _, row := range keyboard.SvgMapping {
 				svgRow := make([]svg.Key_t, 0, 20)
