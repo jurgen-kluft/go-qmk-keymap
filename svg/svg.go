@@ -12,6 +12,7 @@ var STYLE = `
         font-kerning: normal;
         text-rendering: optimizeLegibility;
         fill: #34393e;
+        font-weight: bold;
     }
 
     rect {
@@ -19,7 +20,8 @@ var STYLE = `
     }
 
     .layertitle { 
-		font: bold 16px sans-serif; 
+        font-weight: bold;
+        font-size: 16px; 
 		fill: #F30000; 
 	}
 
