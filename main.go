@@ -299,11 +299,19 @@ func print_svg(keyboard *keyboard_t, layers map[string]*layer_t) {
 	}
 
 	svgLines := svg.Print(svgLayers)
-	fmt.Println("/*")
-	for _, l := range svgLines {
-		fmt.Println(l)
+
+	// write all lines to a text file
+	f, err := os.Create("keymap.svg")
+	if err != nil {
+		fmt.Println(err)
+		return
 	}
-	fmt.Println("*/")
+	defer f.Close()
+	for _, line := range svgLines {
+		f.WriteString(line)
+		f.WriteString("\n")
+	}
+
 }
 
 func main() {
