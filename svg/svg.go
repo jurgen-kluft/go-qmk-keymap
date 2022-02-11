@@ -18,6 +18,11 @@ var STYLE = `
         fill: #f6f8fa;
     }
 
+    .layertitle { 
+		font: bold 16px sans-serif; 
+		fill: #F30000; 
+	}
+
     .green {
         fill: #fdd;
     }
@@ -110,7 +115,7 @@ func Print(layers []Layer_t) []string {
 	s.KeyspaceH = s.KeyH + 2*s.InnerPadH
 	s.HandW = 8 * s.KeyspaceW
 	s.HandH = 4 * s.KeyspaceH
-	s.LayerW = 2*s.HandW + s.OuterPadW
+	s.LayerW = 2*s.HandW + s.KeyspaceW + s.OuterPadW
 	s.LayerH = s.HandH
 	s.BoardW = s.LayerW + 2*s.OuterPadW
 	s.BoardH = s.KeyH + len(layers)*(s.LayerH+s.OuterPadH+s.KeyspaceH)
@@ -157,7 +162,7 @@ func (s *instance) print_layers(layers []Layer_t) {
 
 	for _, layer := range layers {
 
-		line := fmt.Sprintf("<text x=\"%d\" y=\"%d\" text-anchor=\"left\" class=\"key-text\">%s</text>", x, y-s.LineSpacing, layer.Name)
+		line := fmt.Sprintf("<text x=\"%d\" y=\"%d\" text-anchor=\"left\" class=\"layertitle\">%s</text>", x, y-s.LineSpacing, layer.Name)
 		s.lines = append(s.lines, line)
 
 		s.print_layer(x, y, layer)
