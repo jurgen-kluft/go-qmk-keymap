@@ -289,7 +289,12 @@ func print_svg(keyboard *keyboard_t, layers map[string]*layer_t) {
 						svgKey.Key = strings.TrimSpace(svgKey.Key)
 						svgKey.Key = escape_svg(svgKey.Key)
 					}
-					svgKey.Class = ""
+					svgKeyClass, hasClass := keyboard.SvgSymbolColor[svgKey.Key]
+					if hasClass {
+						svgKey.Class = svgKeyClass
+					} else {
+						svgKey.Class = ""
+					}
 					svgRow = append(svgRow, svgKey)
 				}
 				svgLayer.Matrix = append(svgLayer.Matrix, svgRow)
@@ -473,17 +478,18 @@ type vizemit_t struct {
 }
 
 type keyboard_t struct {
-	Name       string            `json:"name"`
-	Numkeys    int               `json:"numkeys"`
-	Rows       [][]int           `json:"rows"`
-	Spacing    []int             `json:"spacing"`
-	VizWidth   int               `json:"vizcellwidth"`
-	VizEmits   []vizemit_t       `json:"vizemits"`
-	VizLine    string            `json:"vizline"`
-	VizBoard   []string          `json:"vizboard"`
-	VizSymbols map[string]string `json:"vizsymbols"`
-	SvgLayers  []string          `json:"svglayers"`
-	SvgMapping [][]int           `json:"svgmapping"`
+	Name           string            `json:"name"`
+	Numkeys        int               `json:"numkeys"`
+	Rows           [][]int           `json:"rows"`
+	Spacing        []int             `json:"spacing"`
+	VizWidth       int               `json:"vizcellwidth"`
+	VizEmits       []vizemit_t       `json:"vizemits"`
+	VizLine        string            `json:"vizline"`
+	VizBoard       []string          `json:"vizboard"`
+	VizSymbols     map[string]string `json:"vizsymbols"`
+	SvgLayers      []string          `json:"svglayers"`
+	SvgMapping     [][]int           `json:"svgmapping"`
+	SvgSymbolColor map[string]string `json:"svgcolors"`
 }
 
 type layer_t struct {
