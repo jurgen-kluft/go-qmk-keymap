@@ -373,7 +373,7 @@ func mainReturnWithCode() error {
 
 	keymaps_begin := "keymaps[]"
 	keymaps_end := "};"
-	keymap_begin := "LAYOUT("
+	keymap_begin := "= LAYOUT"
 	keymap_end1 := "),"
 	keymap_end2 := ")"
 
