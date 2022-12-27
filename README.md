@@ -6,7 +6,7 @@ Adding configuration local to this file ensures this utility can work with any k
 One thing that is required is that each line defining a layer needs to contain exactly this: `= LAYOUT`.
 If you are using certain macro's then this utility will not be able to format your keymap layers. But as long as you are using the `basic` way to define your keymap and layers this utility is able to format it.
 
-Furthermore the export of an `svg` file is now disable by default, you can now enable the export of the `svg` file by setting `"svg": "filepath.svg"`.
+Furthermore the export of an `svg` file is now disabled by default, you can enable the export of the `svg` file by setting `"svg": "filepath.svg"`.
 
 NOTE: The state of this utility is still 'Alpha', things might change and bugs might exist.
 
