@@ -188,6 +188,7 @@ qmk-keyboard-format:json:begin
 {
     "name": "Kyria",
     "numkeys": 50,
+    "svg": "",
     "rows": [
         [ -3,  0,  1,  2,  3,  4,  5, -1, -1, -2, -1, -1,  6,  7,  8,  9, 10, 11 ],
         [ -3, 12, 13, 14, 15, 16, 17, -1, -1, -2, -1, -1, 18, 19, 20, 21, 22, 23 ],
@@ -239,6 +240,18 @@ qmk-keyboard-format:json:begin
         "    //#                                                        ╰───────╯          ╰───────╯                                                         "
     ],
     "vizsymbols": {
+        "LAYER_QWERTY": "QWERTY Layer",
+        "LAYER_RSTHD": "RSTHD Layer",
+        "LAYER_NUMBERS": "Numbers Layer",
+        "LAYER_MOUS": "Mouse Layer",
+        "LAYER_SYMBOLS": "Symbols Layer",
+        "LAYER_NAVIGATION": "Navigation Layer",
+        "LAYER_RAISE": "Raise Layer",
+        "LAYER_VIM": "VIM Layer",
+        "xxxx": "     ",
+        "SH_TG": "  EE ",
+        "CC_FCAPS": "Smart Caps",
+        "CC_FNUM": "Smart Num",
         "_______": "     ",
         "KC_TRANS": "     ",
         "KC_0": "  0  " ,

@@ -3,20 +3,26 @@
 This utility can format a ``keymap.c`` file and particularly the keymap array with LAYOUT's.
 Adding configuration local to this file ensures this utility can work with any keyboard layout.
 
+One thing that is required is that each line defining a layer needs to contain exactly this: `= LAYOUT`.
+If you are using certain macro's then this utility will not be able to format your keymap layers. But as long as you are using the `basic` way to define your keymap and layers this utility is able to format it.
+
+Furthermore the export of an `svg` file is now disable by default, you can now enable the export of the `svg` file by setting `"svg": "filepath.svg"`.
+
 NOTE: The state of this utility is still 'Alpha', things might change and bugs might exist.
 
 ## configuration
 
- Here an example of the configuration that you can add at the bottom of your ```keymap.c``` file.
+ Here an example of the configuration that you can add at the bottom of your `keymap.c` file.
 
  The 'spacing' array is used by the negative indices in the 'rows' definition, you can add/remove items to fit your needs.
 
-```c++
+```json
 /*
 qmk-keyboard-format:json:begin
 {
     "name": "Kyria",
     "numkeys": 50,
+    "svg": "kyria.svg",
     "rows": [
         [  0,  1,  2,  3,  4,  5, -1, -1, -2, -1, -1,  6,  7,  8,  9, 10, 11 ],
         [ 12, 13, 14, 15, 16, 17, -1, -1, -2, -1, -1, 18, 19, 20, 21, 22, 23 ],
@@ -131,8 +137,7 @@ qmk-keyboard-format:json:end
 ## Commandline
 
 Once you have compiled an executable of this utility (`go build` or `go install`) you can then use it as process.
-You need to provide the content of your .c file to the application and write the stdout of the application
-to the same or otherwise a new file.
+You need to provide the content of your .c file to the application and write the stdout of the application to the same or otherwise a new file.
 `cat main.c | go-qmk-keymap(.exe) > main.c`
 You can also run the program without compile step with this command:
 `cat keymap.c | go run main.go > formatted-keymap.c`

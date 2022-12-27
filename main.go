@@ -306,7 +306,7 @@ func print_svg(keyboard *keyboard_t, layers map[string]*layer_t) {
 	svgLines := svg.Print(svgLayers)
 
 	// write all lines to a text file
-	f, err := os.Create("keymap.svg")
+	f, err := os.Create(*keyboard.Svg)
 	if err != nil {
 		fmt.Println(err)
 		return
@@ -316,7 +316,6 @@ func print_svg(keyboard *keyboard_t, layers map[string]*layer_t) {
 		f.WriteString(line)
 		f.WriteString("\n")
 	}
-
 }
 
 func main() {
@@ -457,7 +456,9 @@ func mainReturnWithCode() error {
 		fmt.Println(l)
 	}
 
-	print_svg(kb, layers)
+	if kb.Svg != nil {
+		print_svg(kb, layers)
+	}
 
 	return nil
 }
@@ -480,6 +481,7 @@ type vizemit_t struct {
 type keyboard_t struct {
 	Name           string            `json:"name"`
 	Numkeys        int               `json:"numkeys"`
+	Svg            *string           `json:"svg"`
 	Rows           [][]int           `json:"rows"`
 	Spacing        []int             `json:"spacing"`
 	VizWidth       int               `json:"vizcellwidth"`
